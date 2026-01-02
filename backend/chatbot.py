@@ -1201,7 +1201,7 @@ Enhanced Conversational Chatbot with Gemini API (UPDATED)
 Using new google-genai package
 """
 
-from google import genai
+from google.genai import Client
 from google.genai import types
 from datetime import datetime
 import re
