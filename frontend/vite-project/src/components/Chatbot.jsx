@@ -40,7 +40,7 @@ const Chatbot = ({ isOpen, onClose, showToast }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-end justify-end p-0 md:p-6 z-[100] animate-in fade-in duration-300">
-      <div className="bg-[#0f172a] border border-white/10 shadow-2xl w-full md:w-[450px] h-full md:h-[750px] md:rounded-[2.5rem] flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
+      <div className="bg-[#0f172a] border border-white/10 shadow-2xl w-full md:w-[450px] h-full md:h-[550px] md:rounded-[2.5rem] flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
         
         {/* --- IMPROVED HEADER --- */}
         <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-5 flex items-center justify-between shadow-xl">
