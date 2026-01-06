@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, User, X, Send } from 'lucide-react';
+import { Bot, User, X, Send, Sparkles } from 'lucide-react';
 import { sendChatMessage } from '../services/api';
 
 const Chatbot = ({ isOpen, onClose, showToast }) => {
@@ -13,7 +13,7 @@ const Chatbot = ({ isOpen, onClose, showToast }) => {
     if (isOpen && messages.length === 0) {
       setMessages([{
         role: 'assistant',
-        content: "👋 Assalam-o-Alaikum! Main aapki car price prediction mein madad karunga.\n\nAap mujhse kuch bhi pooch sakte hain jese:\n• Meri car ki price kya hogi?\n• Kyun meri car sasti hai?\n• Kis brand ki car zyada costly hai?\n\nShuru karne ke liye 'predict' likhein! 🚗"
+        content: "👋 Assalam-o-Alaikum! Main aapki car price prediction mein madad karunga. Shuru karne ke liye 'predict' likhein!"
       }]);
     }
   }, [isOpen, messages.length]);
@@ -24,137 +24,114 @@ const Chatbot = ({ isOpen, onClose, showToast }) => {
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
-
-    const userMessage = input.trim();
+    const userMsg = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setLoading(true);
-
     try {
-      const data = await sendChatMessage(sessionId.current, userMessage);
-      
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.reply,
-        prediction: data.prediction
-      }]);
-
-      if (data.action === 'predict' && data.prediction?.success) {
-        showToast('Price predicted successfully!', 'success');
-      }
+      const data = await sendChatMessage(sessionId.current, userMsg);
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply, prediction: data.prediction }]);
     } catch (error) {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '❌ Sorry, network error. Please try again.'
-      }]);
-      showToast('Failed to send message', 'error');
-    } finally {
-      setLoading(false);
-    }
+      showToast('Error sending message', 'error');
+    } finally { setLoading(false); }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end justify-end p-4 z-50">
-      <div className="bg-white rounded-t-2xl md:rounded-2xl shadow-2xl w-full md:w-[450px] h-[600px] flex flex-col">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Bot className="w-6 h-6" />
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-end justify-end p-0 md:p-6 z-[100] animate-in fade-in duration-300">
+      <div className="bg-[#0f172a] border border-white/10 shadow-2xl w-full md:w-[450px] h-full md:h-[750px] md:rounded-[2.5rem] flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
+        
+        {/* --- IMPROVED HEADER --- */}
+        <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-5 flex items-center justify-between shadow-xl">
+          {/* Subtle Background Glow */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+          
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30 shadow-inner">
+              <Bot className="w-6 h-6 text-white" />
             </div>
             <div>
-              <div className="font-bold">AI Assistant</div>
-              <div className="text-xs opacity-90">Online • Urdu/English</div>
+              <h3 className="font-black text-white tracking-tight">AutoAI Concierge</h3>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+                <span className="text-[10px] uppercase tracking-widest text-blue-100 font-bold">Online</span>
+              </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg">
-            <X className="w-5 h-5" />
+          
+          {/* FIX: Better Padding & Positioning for Close Button */}
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }} 
+            className="relative z-20 p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all active:scale-90 border border-white/10 group"
+          >
+            <X className="w-5 h-5 text-white group-hover:rotate-90 transition-transform duration-300" />
           </button>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-              )}
-              
-              <div className={`max-w-[75%] ${msg.role === 'user' ? 'order-1' : ''}`}>
-                <div className={`p-3 rounded-2xl ${
-                  msg.role === 'user' 
-                    ? 'bg-blue-600 text-white rounded-tr-none' 
-                    : 'bg-white text-gray-900 rounded-tl-none shadow-sm'
-                }`}>
-                  <div className="whitespace-pre-wrap text-sm">{msg.content}</div>
-                  
-                  {msg.prediction && msg.prediction.success && (
-                    <div className="mt-3 p-3 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg border border-green-200">
-                      <div className="text-2xl font-bold text-green-700 mb-1">
-                        {msg.prediction.price_display.formatted}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        Range: {msg.prediction.price_range.min_display.lacs} - {msg.prediction.price_range.max_display.lacs} Lacs
-                      </div>
-                    </div>
-                  )}
-                </div>
+        {/* --- MESSAGES AREA --- */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#0f172a] custom-scrollbar">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
+              <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-lg ${
+                msg.role === 'user' 
+                  ? 'bg-blue-600 text-white rounded-tr-none' 
+                  : 'bg-slate-800 text-slate-200 rounded-tl-none border border-white/5'
+              }`}>
+                {msg.content}
+                
+                {msg.prediction && msg.prediction.success && (
+                  <div className="mt-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                     <div className="text-xl font-black text-emerald-400">{msg.prediction.price_display.formatted}</div>
+                     <div className="text-[10px] text-emerald-400/60 font-bold uppercase mt-1">AI Predicted Value</div>
+                  </div>
+                )}
               </div>
-
-              {msg.role === 'user' && (
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-gray-700" />
-                </div>
-              )}
             </div>
           ))}
-          
           {loading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <Bot className="w-5 h-5 text-white" />
-              </div>
-              <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-                </div>
+            <div className="flex justify-start">
+              <div className="bg-slate-800 px-4 py-3 rounded-2xl rounded-tl-none flex gap-1.5">
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce"></div>
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
               </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="p-4 border-t bg-white rounded-b-2xl">
+        {/* --- INPUT AREA --- */}
+        <div className="p-5 bg-slate-900 border-t border-white/5">
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
+            <input 
+              value={input} 
+              onChange={(e) => setInput(e.target.value)} 
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder="Type your message... (Urdu/English)"
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 bg-slate-800 text-white px-5 py-3.5 rounded-2xl outline-none border border-white/10 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+              placeholder="Ask about car prices..."
               disabled={loading}
             />
-            <button
-              onClick={sendMessage}
+            <button 
+              onClick={sendMessage} 
               disabled={loading || !input.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl shadow-lg shadow-blue-900/40 transition-all active:scale-95 disabled:opacity-50"
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-5 h-5"/>
             </button>
-          </div>
-          <div className="text-xs text-gray-500 mt-2 text-center">
-            Ask in Urdu: "Meri car ki price batao" or English: "predict price"
           </div>
         </div>
       </div>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+      `}</style>
     </div>
   );
 };

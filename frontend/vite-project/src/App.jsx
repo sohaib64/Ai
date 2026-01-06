@@ -1,64 +1,13 @@
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import { Toaster } from 'react-hot-toast';
-// // import Navbar from './components/Navbar';
-// import Home from './pages/Home';
-// // import Predict from './pages/Predict';
-// // import Analytics from './pages/Analytics';
-// // import About from './pages/About';
-
-// function App() {
-//   return (
-//     <Router>
-//       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-//         {/* <Navbar /> */}
-        
-//         <Routes>
-//           <Route path="/" element={<Home />} />
-//           {/* <Route path="/predict" element={<Predict />} />
-//           <Route path="/analytics" element={<Analytics />} />
-//           <Route path="/about" element={<About />} /> */}
-//         </Routes>
-        
-//         <Toaster
-//           position="top-right"
-//           toastOptions={{
-//             duration: 4000,
-//             style: {
-//               background: '#fff',
-//               color: '#363636',
-//               boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-//             },
-//             success: {
-//               iconTheme: {
-//                 primary: '#10B981',
-//                 secondary: '#fff',
-//               },
-//             },
-//             error: {
-//               iconTheme: {
-//                 primary: '#EF4444',
-//                 secondary: '#fff',
-//               },
-//             },
-//           }}
-//         />
-//       </div>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
-
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HomePage from './pages/Home';
 import PredictPage from './pages/Predict';
 import AnalyticsPage from './pages/Analytics';
 import AboutPage from './pages/About';
+import FAQPage from './pages/FAQ';
 import Chatbot from './components/Chatbot';
 import ToastContainer from './components/ToastContainer';
-import { MessageCircle } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { fetchModelInfo } from './services/api';
 
 function App() {
@@ -71,6 +20,11 @@ function App() {
     fetchModelInfo()
       .then(data => setModelInfo(data))
       .catch(err => console.error('Failed to load model info:', err));
+
+    // Support for internal FAQ chat trigger
+    const handleOpenChat = () => setChatOpen(true);
+    window.addEventListener('openChat', handleOpenChat);
+    return () => window.removeEventListener('openChat', handleOpenChat);
   }, []);
 
   const showToast = (message, type = 'info') => {
@@ -83,49 +37,29 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0f172a] text-slate-200 selection:bg-blue-500/30 font-sans overflow-x-hidden">
       <style>{`
-        @keyframes slide-in {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        .animate-slide-in {
-          animation: slide-in 0.3s ease-out;
-        }
+        .page-fade-enter { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ${chatOpen ? 'body { overflow: hidden; }' : ''}
       `}</style>
 
+      {/* Navbar Z-Index set to 40 */}
       <Navbar 
         currentPage={currentPage} 
         setCurrentPage={setCurrentPage}
         openChat={() => setChatOpen(true)}
       />
 
-      {currentPage === 'home' && (
-        <HomePage 
-          modelInfo={modelInfo}
-          setCurrentPage={setCurrentPage}
-          openChat={() => setChatOpen(true)}
-        />
-      )}
-      
-      {currentPage === 'predict' && (
-        <PredictPage showToast={showToast} />
-      )}
-      
-      {currentPage === 'analytics' && (
-        <AnalyticsPage showToast={showToast} />
-      )}
-      
-      {currentPage === 'about' && (
-        <AboutPage modelInfo={modelInfo} />
-      )}
+      <main className="relative z-10 page-fade-enter">
+        {currentPage === 'home' && <HomePage modelInfo={modelInfo} setCurrentPage={setCurrentPage} openChat={() => setChatOpen(true)} />}
+        {currentPage === 'predict' && <PredictPage showToast={showToast} />}
+        {currentPage === 'analytics' && <AnalyticsPage showToast={showToast} />}
+        {currentPage === 'about' && <AboutPage modelInfo={modelInfo} />}
+        {currentPage === 'faq' && <FAQPage />}
+      </main>
 
+      {/* Chatbot Z-Index is set to 100 in its own component */}
       <Chatbot 
         isOpen={chatOpen}
         onClose={() => setChatOpen(false)}
@@ -134,15 +68,37 @@ function App() {
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-      {/* Floating Chat Button */}
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-40"
+          className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center z-[30] group animate-bounce"
         >
-          <MessageCircle className="w-6 h-6" />
+          <Sparkles className="w-8 h-8 relative z-10" />
         </button>
       )}
+
+      <footer className="py-12 text-center border-t border-white/5 relative z-10 mt-20 bg-slate-950/20">
+        <div className="container mx-auto px-6">
+           <div className="flex flex-col items-center gap-4">
+              <div className="text-xl font-black tracking-tighter text-white">
+                AUTO<span className="text-blue-500">AI</span>
+              </div>
+              <p className="text-slate-500 text-xs max-w-xs leading-relaxed font-medium uppercase tracking-widest">
+                Pakistan's Premium AI Car Valuation Engine
+              </p>
+              <div className="flex gap-6 mt-4">
+                {['home', 'predict', 'analytics', 'faq', 'about'].map(id => (
+                  <button key={id} onClick={() => setCurrentPage(id)} className="text-[10px] font-bold text-slate-600 hover:text-blue-400 uppercase tracking-widest transition-colors">
+                    {id}
+                  </button>
+                ))}
+              </div>
+              <p className="text-slate-700 text-[10px] mt-8 uppercase tracking-[0.4em] font-black">
+                © 2026 AUTOAI PREDICTOR
+              </p>
+           </div>
+        </div>
+      </footer>
     </div>
   );
 }

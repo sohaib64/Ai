@@ -1,88 +1,5 @@
-// import { Link, useLocation } from 'react-router-dom';
-// import { Car, BarChart3, Info, Sparkles } from 'lucide-react';
-// import { motion } from 'framer-motion';
-
-// const Navbar = () => {
-//   const location = useLocation();
-  
-//   const isActive = (path) => location.pathname === path;
-  
-//   const navItems = [
-//     { path: '/', label: 'Home', icon: Sparkles },
-//     { path: '/predict', label: 'Predict', icon: Car },
-//     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-//     { path: '/about', label: 'About', icon: Info },
-//   ];
-  
-//   return (
-//     <motion.nav
-//       initial={{ y: -100 }}
-//       animate={{ y: 0 }}
-//       className="bg-white shadow-lg sticky top-0 z-50"
-//     >
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex justify-between items-center h-16">
-//           {/* Logo */}
-//           <Link to="/" className="flex items-center space-x-3">
-//             <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-//               <Car className="w-6 h-6 text-white" />
-//             </div>
-//             <span className="text-2xl font-bold gradient-text">
-//               AI Car Predictor
-//             </span>
-//           </Link>
-          
-//           {/* Nav Links */}
-//           <div className="hidden md:flex space-x-1">
-//             {navItems.map((item) => {
-//               const Icon = item.icon;
-//               return (
-//                 <Link
-//                   key={item.path}
-//                   to={item.path}
-//                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-//                     isActive(item.path)
-//                       ? 'bg-blue-600 text-white shadow-lg'
-//                       : 'text-gray-600 hover:bg-blue-50'
-//                   }`}
-//                 >
-//                   <Icon className="w-4 h-4" />
-//                   <span className="font-medium">{item.label}</span>
-//                 </Link>
-//               );
-//             })}
-//           </div>
-          
-//           {/* Mobile Menu */}
-//           <div className="md:hidden flex space-x-2">
-//             {navItems.map((item) => {
-//               const Icon = item.icon;
-//               return (
-//                 <Link
-//                   key={item.path}
-//                   to={item.path}
-//                   className={`p-2 rounded-lg ${
-//                     isActive(item.path)
-//                       ? 'bg-blue-600 text-white'
-//                       : 'text-gray-600 hover:bg-blue-50'
-//                   }`}
-//                 >
-//                   <Icon className="w-5 h-5" />
-//                 </Link>
-//               );
-//             })}
-//           </div>
-//         </div>
-//       </div>
-//     </motion.nav>
-//   );
-// };
-
-// export default Navbar;
-
-
 import React, { useState, useEffect } from 'react';
-import { Menu, Car, Home, Calculator, BarChart3, Info, MessageCircle, X } from 'lucide-react';
+import { Menu, Home, Calculator, BarChart3, Info, MessageCircle, X, Sparkles,HelpCircle } from 'lucide-react';
 
 const Navbar = ({ currentPage, setCurrentPage, openChat }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -96,12 +13,19 @@ const Navbar = ({ currentPage, setCurrentPage, openChat }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // const navItems = [
+  //   { id: 'home', label: 'Home', icon: Home },
+  //   { id: 'predict', label: 'Predict Price', icon: Calculator },
+  //   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  //   { id: 'about', label: 'About', icon: Info }
+  // ];
   const navItems = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'predict', label: 'Predict Price', icon: Calculator },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'about', label: 'About', icon: Info }
-  ];
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'predict', label: 'Predict Price', icon: Calculator },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle }, // FAQ added here
+  { id: 'about', label: 'About', icon: Info }
+];
 
   return (
     <>
@@ -110,165 +34,128 @@ const Navbar = ({ currentPage, setCurrentPage, openChat }) => {
           from { transform: translateY(-100%); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
-          50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.4); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-5px); }
-        }
-        .nav-item-active {
-          position: relative;
+        @keyframes logoGlow {
+          0%, 100% { filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.5)); }
+          50% { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.8)); }
         }
         .nav-item-active::before {
           content: '';
           position: absolute;
           bottom: -2px;
-          left: 0;
-          right: 0;
+          left: 10%;
+          right: 10%;
           height: 3px;
-          background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
-          border-radius: 2px;
-          animation: glow 2s ease-in-out infinite;
-        }
-        .mobile-menu-enter {
-          animation: slideDown 0.3s ease-out;
+          background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+          border-radius: 20px;
         }
       `}</style>
 
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/20' 
-          : 'bg-gradient-to-r from-slate-900/90 via-purple-900/90 to-slate-900/90 backdrop-blur-md'
+          ? 'bg-slate-950/80 backdrop-blur-xl border-b border-white/10 shadow-xl' 
+          : 'bg-transparent py-2'
       }`}>
-        {/* Animated top border */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-70"></div>
         
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            {/* Logo with animation */}
+            
+            {/* --- CUSTOM LOGO SECTION --- */}
             <div 
               className="flex items-center gap-3 cursor-pointer group"
               onClick={() => setCurrentPage('home')}
             >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-blue-600 to-purple-600 p-2.5 rounded-xl group-hover:scale-110 transition-transform">
-                  <Car className="w-7 h-7 text-white" />
-                </div>
+              <div className="relative flex items-center justify-center">
+                {/* Background Glow */}
+                <div className="absolute inset-0 bg-blue-500/30 rounded-full blur-xl group-hover:bg-purple-500/40 transition-all"></div>
+                
+                {/* SVG Logo (Modern Abstract Car/AI) */}
+                <svg width="45" height="45" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10 animate-[logoGlow_3s_infinite]">
+                  <path d="M10 32C10 28.134 13.134 25 17 25H33C36.866 25 40 28.134 40 32V35H10V32Z" fill="url(#logo-grad)" />
+                  <path d="M15 25L20 12H30L35 25H15Z" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="18" cy="35" r="4" fill="#3b82f6" />
+                  <circle cx="32" cy="35" r="4" fill="#3b82f6" />
+                  <defs>
+                    <linearGradient id="logo-grad" x1="10" y1="25" x2="40" y2="35" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#3b82f6" />
+                      <stop offset="1" stopColor="#8b5cf6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
               </div>
-              <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  AI Car Predictor
+
+              <div className="flex flex-col">
+                <span className="text-xl font-black tracking-tighter text-white leading-none">
+                  AUTO<span className="text-blue-500">AI</span>
                 </span>
-                <div className="h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform"></div>
+                <span className="text-[10px] uppercase tracking-[3px] text-slate-400 font-bold">Predictor</span>
               </div>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-2">
-              {navItems.map((item, index) => (
+            <div className="hidden md:flex items-center gap-1">
+              {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setCurrentPage(item.id)}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-300 group ${
+                  className={`relative px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
                     currentPage === item.id
-                      ? 'nav-item-active text-white bg-white/10'
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      ? 'text-white nav-item-active'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  {currentPage === item.id && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-sm"></div>
-                  )}
-                  <item.icon className={`w-5 h-5 relative z-10 transition-transform ${
-                    currentPage === item.id ? 'animate-pulse' : 'group-hover:scale-110'
-                  }`} />
-                  <span className="relative z-10">{item.label}</span>
+                  {item.label}
                 </button>
               ))}
               
-              {/* Chat AI Button with special styling */}
+              {/* Chat AI Button - Unified Theme */}
               <button
                 onClick={openChat}
-                className="relative flex items-center gap-2 px-6 py-2.5 ml-2 rounded-xl font-semibold text-white overflow-hidden group transition-all duration-300 hover:scale-105"
+                className="ml-4 flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full font-bold text-sm shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-600"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="absolute inset-0 animate-pulse opacity-50">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-                </div>
-                <MessageCircle className="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform" />
-                <span className="relative z-10">Chat AI</span>
+                <Sparkles className="w-4 h-4" />
+                <span>Chat AI</span>
               </button>
             </div>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden relative p-3 hover:bg-white/10 rounded-xl transition-all group"
+              className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-all"
             >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-              ) : (
-                <Menu className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
-              )}
+              {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="md:hidden pb-6 space-y-2 mobile-menu-enter">
-              <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
-                {navItems.map((item, index) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setCurrentPage(item.id);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 mb-2 ${
-                      currentPage === item.id
-                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white font-semibold border border-purple-400/30'
-                        : 'text-gray-300 hover:bg-white/10 hover:text-white'
-                    }`}
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                  >
-                    <div className={`p-2 rounded-lg ${
-                      currentPage === item.id 
-                        ? 'bg-gradient-to-br from-blue-500/30 to-purple-500/30' 
-                        : 'bg-white/5'
-                    }`}>
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    <span className="flex-1 text-left">{item.label}</span>
-                    {currentPage === item.id && (
-                      <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 animate-pulse"></div>
-                    )}
-                  </button>
-                ))}
-                
+            <div className="md:hidden absolute top-20 left-0 right-0 bg-slate-900/95 backdrop-blur-2xl border-b border-white/10 p-6 space-y-4 animate-in slide-in-from-top-5">
+              {navItems.map((item) => (
                 <button
+                  key={item.id}
                   onClick={() => {
-                    openChat();
+                    setCurrentPage(item.id);
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-emerald-500 hover:to-green-600 rounded-xl transition-all duration-300 text-white font-semibold mt-4 group"
+                  className={`w-full flex items-center gap-4 p-4 rounded-2xl font-bold transition-all ${
+                    currentPage === item.id
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-400 bg-white/5'
+                  }`}
                 >
-                  <div className="p-2 rounded-lg bg-white/20">
-                    <MessageCircle className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                  </div>
-                  <span className="flex-1 text-left">Chat AI</span>
-                  <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                  <item.icon className="w-5 h-5" />
+                  {item.label}
                 </button>
-              </div>
+              ))}
+              <button
+                onClick={() => { openChat(); setMobileMenuOpen(false); }}
+                className="w-full p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-black flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-5 h-5" />
+                CHAT WITH AI
+              </button>
             </div>
           )}
         </div>
-
-        {/* Bottom glow effect */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
       </nav>
     </>
   );
